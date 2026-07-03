@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Tags.MOD_ID,
      name = Tags.MOD_NAME,
      version = Tags.VERSION,
-     dependencies = "after:tconstruct;after:baubles")
+     dependencies = "required-after:tconstruct;required-after:baubles")
 public class BorrowedBaubles {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
