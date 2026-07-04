@@ -18,6 +18,6 @@ public class ItemDivineInterpreter extends Item implements IBauble {
 
     @Override
     public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.CHARM;
+        return BaubleType.HEAD;
     }
 }

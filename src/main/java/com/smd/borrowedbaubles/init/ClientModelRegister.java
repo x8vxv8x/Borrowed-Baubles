@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID, value = Side.CLIENT)
-public final class ClientModelRegistrar {
+public final class ClientModelRegister {
 
-    private ClientModelRegistrar() {
+    private ClientModelRegister() {
     }
 
     @SubscribeEvent

@@ -145,7 +145,7 @@ public final class TinkerDamageHelper {
         projectileStack.hitEntity(target, player);
         player.addStat(StatList.DAMAGE_DEALT, Math.round(damageDealt * 10.0F));
         player.addExhaustion(0.3F);
-        player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, player.getSoundCategory(), 0.7F, 1.0F);
+        player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, player.getSoundCategory(), 0.7F, 1.0F);
         return new AttackResult(true, damage, damageDealt);
     }
 

@@ -1,3 +1,5 @@
 item.borrowedbaubles.divine_interpreter.name=神言翻译器
 chat.borrowedbaubles.translator_kill=%1$s 死于 %2$s 的奇袭攻击
 chat.borrowedbaubles.arc_kill=%1$s 被 %2$s 的弧光击杀
+death.attack.borrowedbaubles_translator_magic=%1$s 死于 %2$s 的奇袭攻击
+death.attack.borrowedbaubles_arc_magic=%1$s 被 %2$s 的弧光击杀

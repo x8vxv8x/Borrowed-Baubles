@@ -2,6 +2,7 @@ package com.smd.borrowedbaubles.event;
 
 import baubles.api.BaublesApi;
 import com.smd.borrowedbaubles.Tags;
+import com.smd.borrowedbaubles.config.ConfigHandler;
 import com.smd.borrowedbaubles.init.ModItems;
 import com.smd.borrowedbaubles.util.TinkerDamageHelper;
 import com.smd.borrowedbaubles.util.TranslatorMagicDamageSource;
@@ -29,8 +30,6 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class DivineInterpreterHandler {
 
-    private static final float PROC_CHANCE = 1.0F;
-    private static final double ARC_RADIUS = 1.0D;
     private static final List<PendingStrike> PENDING_STRIKES = new ArrayList<>();
 
     private DivineInterpreterHandler() {
@@ -38,7 +37,7 @@ public final class DivineInterpreterHandler {
 
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent event) {
-        if (event.getEntityLiving().world.isRemote || event.getAmount() <= 0.0F) {
+        if (event.getEntityLiving().getEntityWorld().isRemote || event.getAmount() <= 0.0F) {
             return;
         }
         if (event.getSource() instanceof TranslatorMagicDamageSource) {
@@ -74,7 +73,7 @@ public final class DivineInterpreterHandler {
         if (!(projectile.tinkerProjectile.getItemStack().getItem() instanceof ProjectileCore)) {
             return;
         }
-        if (player.getRNG().nextFloat() >= PROC_CHANCE) {
+        if (player.getRNG().nextFloat() >= ConfigHandler.proc_chance) {
             return;
         }
 
@@ -112,7 +111,7 @@ public final class DivineInterpreterHandler {
             if (player == null || target == null || projectile == null) {
                 return;
             }
-            if (player.isDead || target.isDead || player.world.isRemote || player.world != target.world) {
+            if (player.isDead || target.isDead || player.getEntityWorld().isRemote || player.getEntityWorld() != target.getEntityWorld()) {
                 return;
             }
             if (!(offhandTool.getItem() instanceof ToolCore) || ToolHelper.isBroken(offhandTool)) {
@@ -143,16 +142,18 @@ public final class DivineInterpreterHandler {
                 return;
             }
 
+            float finalDamage = projectileBaseDamage * ConfigHandler.damagemultiplier;
+
             TinkerDamageHelper.AttackResult result = TinkerDamageHelper.attackEntityWithCustomDamageResult(
                     projectileStack,
                     player,
                     target,
                     projectile,
-                    projectileBaseDamage,
+                    finalDamage,
                     new TranslatorMagicDamageSource(projectile, player)
             );
-            if (result.hit && player.world instanceof WorldServer) {
-                WorldServer world = (WorldServer) player.world;
+            if (result.hit && player.getEntityWorld() instanceof WorldServer) {
+                WorldServer world = (WorldServer) player.getEntityWorld();
                 world.spawnParticle(
                         EnumParticleTypes.SPELL_MOB,
                         target.posX,
@@ -181,12 +182,12 @@ public final class DivineInterpreterHandler {
             }
 
             AxisAlignedBB area = new AxisAlignedBB(
-                    target.posX - ARC_RADIUS,
-                    target.posY - ARC_RADIUS,
-                    target.posZ - ARC_RADIUS,
-                    target.posX + ARC_RADIUS,
-                    target.posY + target.height + ARC_RADIUS,
-                    target.posZ + ARC_RADIUS
+                    target.posX - ConfigHandler.arc_radius,
+                    target.posY - ConfigHandler.arc_radius,
+                    target.posZ - ConfigHandler.arc_radius,
+                    target.posX + ConfigHandler.arc_radius,
+                    target.posY + target.height + ConfigHandler.arc_radius,
+                    target.posZ + ConfigHandler.arc_radius
             );
 
             List<EntityLivingBase> nearbyTargets = world.getEntitiesWithinAABB(EntityLivingBase.class, area);
