@@ -19,7 +19,7 @@ public class BorrowedBaubles {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
 
     @SidedProxy(serverSide = "com.smd.borrowedbaubles.proxy.CommonProxy",
-            clientSide = "com.smd.borrowedbaubles.proxy.ClientProxy")
+                clientSide = "com.smd.borrowedbaubles.proxy.ClientProxy")
 
     public static CommonProxy proxy;
 
