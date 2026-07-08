@@ -1,5 +1,6 @@
 package com.smd.borrowedbaubles.util;
 
+import com.smd.borrowedbaubles.config.ConfigHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntityDamageSourceIndirect;
@@ -15,7 +16,25 @@ public class TranslatorMagicDamageSource extends EntityDamageSourceIndirect {
 
     public TranslatorMagicDamageSource(String damageType, Entity immediateSource, EntityLivingBase trueSource) {
         super(damageType, immediateSource, trueSource);
-        setMagicDamage();
+        applyDamageMode();
         setProjectile();
+    }
+
+    private void applyDamageMode() {
+        switch (ConfigHandler.surprise_damage_mode) {
+            case 1:
+                setDamageBypassesArmor();
+                break;
+            case 2:
+                setMagicDamage();
+                break;
+            case 3:
+                setMagicDamage();
+                setDamageIsAbsolute();
+                break;
+            case 0:
+            default:
+                break;
+        }
     }
 }
