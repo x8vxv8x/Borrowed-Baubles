@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Tags.MOD_ID,
      name = Tags.MOD_NAME,
      version = Tags.VERSION,
-     dependencies = "required-after:tconstruct;required-after:baubles")
+     dependencies = "required-after:tconstruct;required-after:baubles;required-after:tcongreedyaddon")
 public class BorrowedBaubles {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
@@ -31,9 +31,4 @@ public class BorrowedBaubles {
             return new ItemStack(ModItems.DIVINE_INTERPRETER);
         }
     };
-
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-    }
-
 }

@@ -21,5 +21,10 @@ public final class ClientModelRegister {
                 0,
                 new ModelResourceLocation(ModItems.DIVINE_INTERPRETER.getRegistryName(), "inventory")
         );
+        ModelLoader.setCustomModelResourceLocation(
+                ModItems.FERAL_BOBBER,
+                0,
+                new ModelResourceLocation(ModItems.FERAL_BOBBER.getRegistryName(), "inventory")
+        );
     }
 }

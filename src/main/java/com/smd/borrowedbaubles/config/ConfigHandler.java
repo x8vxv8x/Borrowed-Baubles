@@ -26,4 +26,12 @@ public class ConfigHandler {
     @Comment("弧光的索敌范围")
     public static double arc_radius = 2;
 
+    @Name("FERAL_BOBBER_PULL_MULTIPLIER")
+    @Comment("野性浮漂拉回伤害的基础倍率。已损生命值百分比会在此基础上继续加算")
+    public static float feral_bobber_pull_multiplier = 2.0F;
+
+    @Name("FERAL_BOBBER_SURPRISE_MULTIPLIER")
+    @Comment("同时佩戴野性浮漂和神言翻译器时，鱼钩触发奇袭的额外倍率")
+    public static float feral_bobber_surprise_multiplier = 3.0F;
+
 }

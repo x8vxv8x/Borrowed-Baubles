@@ -1,6 +1,7 @@
 itemGroup.borrowedbaubles=随意饰品
 
 item.borrowedbaubles.divine_interpreter.name=神言翻译器
+item.borrowedbaubles.feral_bobber.name=野性浮标
 
 
 chat.borrowedbaubles.translator_kill=%1$s 死于 %2$s 的奇袭攻击

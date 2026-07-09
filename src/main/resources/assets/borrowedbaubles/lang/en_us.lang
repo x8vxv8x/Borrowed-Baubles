@@ -1,6 +1,7 @@
 itemGroup.borrowedbaubles=随意饰品
 
 item.borrowedbaubles.divine_interpreter.name=Divine Interpreter
+item.borrowedbaubles.feral_bobber.name=Feral Bobber
 death.attack.borrowedbaubles_translator_magic=%1$s was unraveled by %2$s's Divine Interpreter
 death.attack.borrowedbaubles_arc_magic=%1$s was arc-killed by %2$s
 chat.borrowedbaubles.translator_kill=%1$s was unraveled by %2$s's Divine Interpreter
