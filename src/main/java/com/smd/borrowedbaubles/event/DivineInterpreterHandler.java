@@ -108,7 +108,8 @@ public final class DivineInterpreterHandler {
             return true;
         }
 
-        PENDING_STRIKES.add(new PendingFeralBobberStrike(player, event.getEntityLiving(), immediateSource, offhand.copy()));
+        PENDING_STRIKES.add(new PendingFeralBobberStrike(player, event.getEntityLiving(), immediateSource,
+                offhand.copy(), event.getAmount()));
         return true;
     }
 
@@ -201,12 +202,15 @@ public final class DivineInterpreterHandler {
         private final EntityLivingBase target;
         private final Entity immediateSource;
         private final ItemStack offhandTool;
+        private final float pullDamage;
 
-        private PendingFeralBobberStrike(EntityPlayer player, EntityLivingBase target, Entity immediateSource, ItemStack offhandTool) {
+        private PendingFeralBobberStrike(EntityPlayer player, EntityLivingBase target, Entity immediateSource,
+                                         ItemStack offhandTool, float pullDamage) {
             this.player = player;
             this.target = target;
             this.immediateSource = immediateSource;
             this.offhandTool = offhandTool;
+            this.pullDamage = pullDamage;
         }
 
         @Override
@@ -230,7 +234,7 @@ public final class DivineInterpreterHandler {
             float healthCost = Math.max(FERAL_SURPRISE_FLAT_HEALTH_COST, maxHealth * FERAL_SURPRISE_MAX_HEALTH_COST_RATE);
             player.setHealth(player.getHealth() - healthCost);
 
-            float finalDamage = offhandDamage
+            float finalDamage = (offhandDamage + Math.max(0.0F, pullDamage))
                     * ConfigHandler.damagemultiplier
                     * ConfigHandler.feral_bobber_surprise_multiplier;
             target.hurtResistantTime = 0;
