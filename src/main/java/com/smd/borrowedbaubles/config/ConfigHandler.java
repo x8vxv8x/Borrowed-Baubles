@@ -26,12 +26,20 @@ public class ConfigHandler {
     @Comment("弧光的索敌范围")
     public static double arc_radius = 2;
 
-    @Name("FERAL_BOBBER_PULL_MULTIPLIER")
-    @Comment("野性浮漂拉回伤害的基础倍率。已损生命值百分比会在此基础上继续加算")
-    public static float feral_bobber_pull_multiplier = 3.0F;
+    @Name("FERAL_BOBBER_PULL_BASE_MULTIPLIER")
+    @Comment("野性浮漂拉回伤害的基础倍率")
+    public static float feral_bobber_pull_base_multiplier = 2.0F;
 
-    @Name("FERAL_BOBBER_SURPRISE_MULTIPLIER")
-    @Comment("同时佩戴野性浮漂和神言翻译器时，鱼钩触发奇袭的额外倍率")
-    public static float feral_bobber_surprise_multiplier = 5.0F;
+    @Name("FERAL_BOBBER_PULL_MISSING_HEALTH_SCALING")
+    @Comment("野性浮漂拉回伤害的已损生命值倍率斜率。倍率 = 基础倍率 * (1 + 已损生命值百分比 * 该值)")
+    public static float feral_bobber_pull_missing_health_scaling = 12.0F;
+
+    @Name("FERAL_BOBBER_SURPRISE_BASE_MULTIPLIER")
+    @Comment("同时佩戴野性浮漂和神言翻译器时，鱼钩触发奇袭的基础额外倍率")
+    public static float feral_bobber_surprise_base_multiplier = 2.0F;
+
+    @Name("FERAL_BOBBER_SURPRISE_MISSING_HEALTH_SCALING")
+    @Comment("野性浮漂鱼钩奇袭的已损生命值倍率斜率。奇袭会同时吃拉回与奇袭两层已损生命值倍率")
+    public static float feral_bobber_surprise_missing_health_scaling = 12.0F;
 
 }

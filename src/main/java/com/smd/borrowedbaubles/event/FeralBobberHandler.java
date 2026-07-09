@@ -22,8 +22,8 @@ import slimeknights.tconstruct.library.utils.ToolHelper;
 public final class FeralBobberHandler {
 
     private static final int DAMAGE_INTERVAL_TICKS = 2;
-    private static final float FLAT_HEALTH_COST = 2.0F;
-    private static final float MAX_HEALTH_COST_RATE = 0.01F;
+    private static final float FLAT_HEALTH_COST = 4.0F;
+    private static final float MAX_HEALTH_COST_RATE = 0.02F;
 
     private FeralBobberHandler() {
     }
@@ -50,11 +50,22 @@ public final class FeralBobberHandler {
         float healthCost = Math.max(FLAT_HEALTH_COST, maxHealth * MAX_HEALTH_COST_RATE);
         player.setHealth(player.getHealth() - healthCost);
 
-        float missingHealthRate = maxHealth <= 0.0F ? 0.0F : (maxHealth - player.getHealth()) / maxHealth;
-        float damageMultiplier = ConfigHandler.feral_bobber_pull_multiplier * Math.max(1.0F, 1.0F + missingHealthRate);
+        float missingHealthRate = getMissingHealthRate(player, maxHealth);
+        float missingHealthMultiplier = 1.0F
+                + missingHealthRate * ConfigHandler.feral_bobber_pull_missing_health_scaling;
+        float damageMultiplier = ConfigHandler.feral_bobber_pull_base_multiplier * missingHealthMultiplier;
 
         EntityFishHook hook = event.getHook();
         FeralBobberPullDamageSource damageSource = new FeralBobberPullDamageSource(hook, player);
         ToolAttackHelper.attackEntityRight(rod, (ToolCore) rod.getItem(), player, target, damageMultiplier, damageSource);
+    }
+
+    private static float getMissingHealthRate(EntityPlayer player, float maxHealth) {
+        if (maxHealth <= 0.0F) {
+            return 0.0F;
+        }
+
+        float rate = (maxHealth - player.getHealth()) / maxHealth;
+        return Math.max(0.0F, Math.min(1.0F, rate));
     }
 }

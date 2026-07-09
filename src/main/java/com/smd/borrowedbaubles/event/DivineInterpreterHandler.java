@@ -234,9 +234,16 @@ public final class DivineInterpreterHandler {
             float healthCost = Math.max(FERAL_SURPRISE_FLAT_HEALTH_COST, maxHealth * FERAL_SURPRISE_MAX_HEALTH_COST_RATE);
             player.setHealth(player.getHealth() - healthCost);
 
+            float missingHealthRate = getMissingHealthRate(player, maxHealth);
+            float pullMissingMultiplier = 1.0F
+                    + missingHealthRate * ConfigHandler.feral_bobber_pull_missing_health_scaling;
+            float surpriseMissingMultiplier = 1.0F
+                    + missingHealthRate * ConfigHandler.feral_bobber_surprise_missing_health_scaling;
             float finalDamage = (offhandDamage + Math.max(0.0F, pullDamage))
                     * ConfigHandler.damagemultiplier
-                    * ConfigHandler.feral_bobber_surprise_multiplier;
+                    * ConfigHandler.feral_bobber_surprise_base_multiplier
+                    * pullMissingMultiplier
+                    * surpriseMissingMultiplier;
             target.hurtResistantTime = 0;
             boolean hit = target.attackEntityFrom(new FeralBobberSurpriseDamageSource(immediateSource, player), finalDamage);
             if (hit && player.getEntityWorld() instanceof WorldServer) {
@@ -318,5 +325,14 @@ public final class DivineInterpreterHandler {
                 ));
             }
         }
+    }
+
+    private static float getMissingHealthRate(EntityPlayer player, float maxHealth) {
+        if (maxHealth <= 0.0F) {
+            return 0.0F;
+        }
+
+        float rate = (maxHealth - player.getHealth()) / maxHealth;
+        return Math.max(0.0F, Math.min(1.0F, rate));
     }
 }
