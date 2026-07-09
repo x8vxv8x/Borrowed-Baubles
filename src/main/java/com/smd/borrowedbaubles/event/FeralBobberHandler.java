@@ -21,7 +21,7 @@ import slimeknights.tconstruct.library.utils.ToolHelper;
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class FeralBobberHandler {
 
-    private static final int DAMAGE_INTERVAL_TICKS = 2;
+    private static final int DAMAGE_INTERVAL_TICKS = 4;
     private static final float FLAT_HEALTH_COST = 4.0F;
     private static final float MAX_HEALTH_COST_RATE = 0.02F;
 

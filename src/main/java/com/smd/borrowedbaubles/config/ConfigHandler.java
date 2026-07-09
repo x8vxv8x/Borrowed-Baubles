@@ -28,18 +28,18 @@ public class ConfigHandler {
 
     @Name("FERAL_BOBBER_PULL_BASE_MULTIPLIER")
     @Comment("野性浮漂拉回伤害的基础倍率")
-    public static float feral_bobber_pull_base_multiplier = 2.0F;
+    public static float feral_bobber_pull_base_multiplier = 1.5F;
 
     @Name("FERAL_BOBBER_PULL_MISSING_HEALTH_SCALING")
     @Comment("野性浮漂拉回伤害的已损生命值倍率斜率。倍率 = 基础倍率 * (1 + 已损生命值百分比 * 该值)")
-    public static float feral_bobber_pull_missing_health_scaling = 12.0F;
+    public static float feral_bobber_pull_missing_health_scaling = 8.0F;
 
     @Name("FERAL_BOBBER_SURPRISE_BASE_MULTIPLIER")
     @Comment("同时佩戴野性浮漂和神言翻译器时，鱼钩触发奇袭的基础额外倍率")
-    public static float feral_bobber_surprise_base_multiplier = 2.0F;
+    public static float feral_bobber_surprise_base_multiplier = 3.0F;
 
     @Name("FERAL_BOBBER_SURPRISE_MISSING_HEALTH_SCALING")
     @Comment("野性浮漂鱼钩奇袭的已损生命值倍率斜率。奇袭会同时吃拉回与奇袭两层已损生命值倍率")
-    public static float feral_bobber_surprise_missing_health_scaling = 12.0F;
+    public static float feral_bobber_surprise_missing_health_scaling = 2.0F;
 
 }
