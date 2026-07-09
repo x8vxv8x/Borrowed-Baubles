@@ -4,6 +4,7 @@ import baubles.api.BaublesApi;
 import com.smd.borrowedbaubles.Tags;
 import com.smd.borrowedbaubles.config.ConfigHandler;
 import com.smd.borrowedbaubles.init.ModItems;
+import com.smd.borrowedbaubles.util.FeralBobberPullDamageSource;
 import com.smd.borrowedbaubles.util.FeralBobberSurpriseDamageSource;
 import com.smd.borrowedbaubles.util.TinkerDamageHelper;
 import com.smd.borrowedbaubles.util.TranslatorMagicDamageSource;
@@ -92,7 +93,8 @@ public final class DivineInterpreterHandler {
 
     private static boolean tryQueueFeralBobberStrike(LivingDamageEvent event, EntityPlayer player) {
         Entity immediateSource = event.getSource().getImmediateSource();
-        if (!event.getSource().isProjectile()
+        if (!(event.getSource() instanceof FeralBobberPullDamageSource)
+                || !event.getSource().isProjectile()
                 || !(immediateSource instanceof EntityFishHook)
                 || BaublesApi.isBaubleEquipped(player, ModItems.FERAL_BOBBER) < 0) {
             return false;

@@ -4,6 +4,7 @@ import baubles.api.BaublesApi;
 import com.smd.borrowedbaubles.Tags;
 import com.smd.borrowedbaubles.config.ConfigHandler;
 import com.smd.borrowedbaubles.init.ModItems;
+import com.smd.borrowedbaubles.util.FeralBobberPullDamageSource;
 import com.smd.tcongreedyaddon.tools.fishingrod.FishingRodHookedEntityTickEvent;
 import com.smd.tcongreedyaddon.util.ToolAttackHelper;
 import net.minecraft.entity.Entity;
@@ -12,7 +13,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import slimeknights.tconstruct.library.tools.ToolCore;
@@ -21,9 +21,9 @@ import slimeknights.tconstruct.library.utils.ToolHelper;
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class FeralBobberHandler {
 
-    private static final int DAMAGE_INTERVAL_TICKS = 4;
+    private static final int DAMAGE_INTERVAL_TICKS = 2;
     private static final float FLAT_HEALTH_COST = 2.0F;
-    private static final float MAX_HEALTH_COST_RATE = 0.02F;
+    private static final float MAX_HEALTH_COST_RATE = 0.01F;
 
     private FeralBobberHandler() {
     }
@@ -54,8 +54,7 @@ public final class FeralBobberHandler {
         float damageMultiplier = ConfigHandler.feral_bobber_pull_multiplier * Math.max(1.0F, 1.0F + missingHealthRate);
 
         EntityFishHook hook = event.getHook();
-        DamageSource damageSource = DamageSource.causeThrownDamage(hook, player);
-        target.hurtResistantTime = 0;
+        FeralBobberPullDamageSource damageSource = new FeralBobberPullDamageSource(hook, player);
         ToolAttackHelper.attackEntityRight(rod, (ToolCore) rod.getItem(), player, target, damageMultiplier, damageSource);
     }
 }
