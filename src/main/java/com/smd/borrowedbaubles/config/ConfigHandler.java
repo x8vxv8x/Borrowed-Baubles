@@ -28,10 +28,10 @@ public class ConfigHandler {
 
     @Name("FERAL_BOBBER_PULL_BASE_MULTIPLIER")
     @Comment("野性浮漂拉回伤害的基础倍率")
-    public static float feral_bobber_pull_base_multiplier = 1.5F;
+    public static float feral_bobber_pull_base_multiplier = 2.0F;
 
     @Name("FERAL_BOBBER_PULL_MISSING_HEALTH_SCALING")
-    @Comment("野性浮漂拉回伤害的已损生命值倍率斜率。倍率 = 基础倍率 * (1 + 已损生命值百分比 * 该值)")
-    public static float feral_bobber_pull_missing_health_scaling = 8.0F;
+    @Comment("野性浮漂拉回伤害的已损生命值倍率斜率。倍率 = 基础倍率 * (1 + 已损生命值 * 该值)")
+    public static float feral_bobber_pull_missing_health_scaling = 2.0F;
 
 }
