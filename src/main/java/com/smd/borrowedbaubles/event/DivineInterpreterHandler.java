@@ -4,16 +4,12 @@ import baubles.api.BaublesApi;
 import com.smd.borrowedbaubles.Tags;
 import com.smd.borrowedbaubles.config.ConfigHandler;
 import com.smd.borrowedbaubles.init.ModItems;
-import com.smd.borrowedbaubles.util.FeralBobberPullDamageSource;
-import com.smd.borrowedbaubles.util.FeralBobberSurpriseDamageSource;
 import com.smd.borrowedbaubles.util.TinkerDamageHelper;
 import com.smd.borrowedbaubles.util.TranslatorMagicDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -36,8 +32,6 @@ import java.util.List;
 public final class DivineInterpreterHandler {
 
     private static final List<PendingAction> PENDING_STRIKES = new ArrayList<>();
-    private static final float FERAL_SURPRISE_FLAT_HEALTH_COST = 3.0F;
-    private static final float FERAL_SURPRISE_MAX_HEALTH_COST_RATE = 0.03F;
 
     private DivineInterpreterHandler() {
     }
@@ -59,9 +53,6 @@ public final class DivineInterpreterHandler {
 
         EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
         if (BaublesApi.isBaubleEquipped(player, ModItems.DIVINE_INTERPRETER) < 0) {
-            return;
-        }
-        if (tryQueueFeralBobberStrike(event, player)) {
             return;
         }
         if (!(event.getSource().getImmediateSource() instanceof EntityProjectileBase)) {
@@ -89,28 +80,6 @@ public final class DivineInterpreterHandler {
         }
 
         PENDING_STRIKES.add(new PendingStrike(player, event.getEntityLiving(), projectile, offhand.copy()));
-    }
-
-    private static boolean tryQueueFeralBobberStrike(LivingDamageEvent event, EntityPlayer player) {
-        Entity immediateSource = event.getSource().getImmediateSource();
-        if (!(event.getSource() instanceof FeralBobberPullDamageSource)
-                || !event.getSource().isProjectile()
-                || !(immediateSource instanceof EntityFishHook)
-                || BaublesApi.isBaubleEquipped(player, ModItems.FERAL_BOBBER) < 0) {
-            return false;
-        }
-
-        ItemStack offhand = player.getHeldItemOffhand();
-        if (!(offhand.getItem() instanceof ToolCore) || ToolHelper.isBroken(offhand)) {
-            return false;
-        }
-        if (player.getRNG().nextFloat() >= ConfigHandler.proc_chance) {
-            return true;
-        }
-
-        PENDING_STRIKES.add(new PendingFeralBobberStrike(player, event.getEntityLiving(), immediateSource,
-                offhand.copy(), event.getAmount()));
-        return true;
     }
 
     @SubscribeEvent
@@ -191,69 +160,13 @@ public final class DivineInterpreterHandler {
                     new TranslatorMagicDamageSource(projectile, player)
             );
             if (result.hit && player.getEntityWorld() instanceof WorldServer) {
-                finishTranslatorHit((WorldServer) player.getEntityWorld(), player, target, projectile, result.attemptedDamage, false);
-            }
-        }
-    }
-
-    private static final class PendingFeralBobberStrike implements PendingAction {
-
-        private final EntityPlayer player;
-        private final EntityLivingBase target;
-        private final Entity immediateSource;
-        private final ItemStack offhandTool;
-        private final float pullDamage;
-
-        private PendingFeralBobberStrike(EntityPlayer player, EntityLivingBase target, Entity immediateSource,
-                                         ItemStack offhandTool, float pullDamage) {
-            this.player = player;
-            this.target = target;
-            this.immediateSource = immediateSource;
-            this.offhandTool = offhandTool;
-            this.pullDamage = pullDamage;
-        }
-
-        @Override
-        public void execute() {
-            if (player == null || target == null || immediateSource == null) {
-                return;
-            }
-            if (player.isDead || target.isDead || player.getEntityWorld().isRemote || player.getEntityWorld() != target.getEntityWorld()) {
-                return;
-            }
-            if (!(offhandTool.getItem() instanceof ToolCore) || ToolHelper.isBroken(offhandTool)) {
-                return;
-            }
-
-            float offhandDamage = TinkerDamageHelper.simulateOffhandMeleeDamage(offhandTool, player, target);
-            if (offhandDamage <= 0.0F) {
-                return;
-            }
-
-            float maxHealth = (float) player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
-            float healthCost = Math.max(FERAL_SURPRISE_FLAT_HEALTH_COST, maxHealth * FERAL_SURPRISE_MAX_HEALTH_COST_RATE);
-            player.setHealth(player.getHealth() - healthCost);
-
-            float missingHealthRate = getMissingHealthRate(player, maxHealth);
-            float pullMissingMultiplier = 1.0F
-                    + missingHealthRate * ConfigHandler.feral_bobber_pull_missing_health_scaling;
-            float surpriseMissingMultiplier = 1.0F
-                    + missingHealthRate * ConfigHandler.feral_bobber_surprise_missing_health_scaling;
-            float finalDamage = (offhandDamage + Math.max(0.0F, pullDamage))
-                    * ConfigHandler.damagemultiplier
-                    * ConfigHandler.feral_bobber_surprise_base_multiplier
-                    * pullMissingMultiplier
-                    * surpriseMissingMultiplier;
-            target.hurtResistantTime = 0;
-            boolean hit = target.attackEntityFrom(new FeralBobberSurpriseDamageSource(immediateSource, player), finalDamage);
-            if (hit && player.getEntityWorld() instanceof WorldServer) {
-                finishTranslatorHit((WorldServer) player.getEntityWorld(), player, target, immediateSource, finalDamage, true);
+                finishTranslatorHit((WorldServer) player.getEntityWorld(), player, target, projectile, result.attemptedDamage);
             }
         }
     }
 
     private static void finishTranslatorHit(WorldServer world, EntityPlayer player, EntityLivingBase target,
-                                            Entity immediateSource, float damageAmount, boolean feralBobberDamage) {
+                                            Entity immediateSource, float damageAmount) {
         world.spawnParticle(
                 EnumParticleTypes.SPELL_MOB,
                 target.posX,
@@ -272,11 +185,11 @@ public final class DivineInterpreterHandler {
                     player.getDisplayName()
             ));
         }
-        applyArcDamage(world, player, target, immediateSource, damageAmount, feralBobberDamage);
+        applyArcDamage(world, player, target, immediateSource, damageAmount);
     }
 
     private static void applyArcDamage(WorldServer world, EntityPlayer player, EntityLivingBase target,
-                                       Entity immediateSource, float damageAmount, boolean feralBobberDamage) {
+                                       Entity immediateSource, float damageAmount) {
         if (damageAmount <= 0.0F) {
             return;
         }
@@ -297,9 +210,7 @@ public final class DivineInterpreterHandler {
             }
 
             boolean hit = nearby.attackEntityFrom(
-                    feralBobberDamage
-                            ? new FeralBobberSurpriseDamageSource(TranslatorMagicDamageSource.ARC_DAMAGE_TYPE, immediateSource, player)
-                            : new TranslatorMagicDamageSource(TranslatorMagicDamageSource.ARC_DAMAGE_TYPE, immediateSource, player),
+                    new TranslatorMagicDamageSource(TranslatorMagicDamageSource.ARC_DAMAGE_TYPE, immediateSource, player),
                     damageAmount);
             if (!hit) {
                 continue;
@@ -325,14 +236,5 @@ public final class DivineInterpreterHandler {
                 ));
             }
         }
-    }
-
-    private static float getMissingHealthRate(EntityPlayer player, float maxHealth) {
-        if (maxHealth <= 0.0F) {
-            return 0.0F;
-        }
-
-        float rate = (maxHealth - player.getHealth()) / maxHealth;
-        return Math.max(0.0F, Math.min(1.0F, rate));
     }
 }
