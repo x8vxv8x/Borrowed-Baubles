@@ -90,9 +90,9 @@ public final class TinkerDamageHelper {
         }
 
         float oldHealth = target.getHealth();
-        double oldVelX = target.motionX;
-        double oldVelY = target.motionY;
-        double oldVelZ = target.motionZ;
+        double originalVelX = target.motionX;
+        double originalVelY = target.motionY;
+        double originalVelZ = target.motionZ;
         int originalHurtResistantTime = target.hurtResistantTime;
 
         for (ITrait trait : traits) {
@@ -108,9 +108,11 @@ public final class TinkerDamageHelper {
         }
 
         float damageDealt = oldHealth - target.getHealth();
-        oldVelX = target.motionX = oldVelX + (target.motionX - oldVelX) * (double) tool.knockback();
-        oldVelY = target.motionY = oldVelY + (target.motionY - oldVelY) * (double) tool.knockback() / 3.0D;
-        oldVelZ = target.motionZ = oldVelZ + (target.motionZ - oldVelZ) * (double) tool.knockback();
+        double toolKnockback = tool.knockback();
+
+        target.motionX = originalVelX + (target.motionX - originalVelX) * toolKnockback;
+        target.motionY = originalVelY + (target.motionY - originalVelY) * toolKnockback / 3.0D;
+        target.motionZ = originalVelZ + (target.motionZ - originalVelZ) * toolKnockback;
 
         if (knockback > 0.0F) {
             double velX = -Math.sin(player.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F;
@@ -124,9 +126,6 @@ public final class TinkerDamageHelper {
         if (target instanceof EntityPlayerMP && target.velocityChanged) {
             ((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
             target.velocityChanged = false;
-            target.motionX = oldVelX;
-            target.motionY = oldVelY;
-            target.motionZ = oldVelZ;
         }
 
         if (isCritical) {
